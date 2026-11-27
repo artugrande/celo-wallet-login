@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# celo-wallet-login
 
-## Getting Started
+Sign in with a browser wallet on Celo through Sign-In with Ethereum ([EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)) and [Supabase Auth](https://supabase.com/docs/guides/auth/auth-web3). The user signs a message, nothing goes on chain, no gas, no email or password. Supabase returns a normal session, and row level security only lets a user read their own notes after a sign-in on Celo mainnet (chain ID `42220`).
 
-First, run the development server:
+## What it shows
+
+- **Wallet picker** with [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963): one button per installed extension, instead of whichever one grabbed `window.ethereum`.
+- **`signInWithWeb3` forced to Celo** with `options.signInWithEthereum.chainId: 42220`, so the message names Celo even when the wallet is on another network.
+- **A Celo-only check** after sign-in, and the same rule enforced in the database.
+- **Row level security that can't be spoofed.** The policy reads the chain from `auth.identities`, which only Supabase Auth writes, never from `user_metadata`, which users can rewrite with `updateUser()`.
+- **MiniPay**: MiniPay doesn't support `personal_sign`, so the app shows a notice there instead of a sign-in that would never resolve.
+
+## Run it
+
+1. Create a Supabase project.
+2. In **Auth providers**, enable **Web3 Wallet → Ethereum**.
+3. In **URL Configuration → Redirect URLs**, add your URLs, for example `http://localhost:3000/**` and `https://your-app.vercel.app/**`. Supabase rejects messages signed for any other URL.
+4. Run [`supabase/migrations/0001_notes.sql`](supabase/migrations/0001_notes.sql) in the SQL editor.
+5. Copy `.env.example` to `.env.local` and fill in the project URL and publishable key.
+6. Start it:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Requires `@supabase/supabase-js` 2.58.0 or later, the first release with Ethereum support in `signInWithWeb3`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Files
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| File | What it does |
+|---|---|
+| `app/page.tsx` | Wallet picker, `signInWithWeb3` on Celo, the Celo-only check |
+| `app/account/page.tsx` | Session data and notes protected by row level security |
+| `lib/wallets.ts` | EIP-6963 discovery, MiniPay detection, error messages |
+| `supabase/migrations/0001_notes.sql` | `private.signed_in_on_celo()` and the notes policies |
 
-## Learn More
+## Errors you may see
 
-To learn more about Next.js, take a look at the following resources:
+| Error | Meaning |
+|---|---|
+| `@supabase/auth-js: Wallet method eth_requestAccounts is missing or invalid` | The wallet didn't share an address. Supabase shows this for a user rejection and for a request already pending in the wallet (MetaMask `-32002`), not only for unsupported wallets |
+| `signature must be 65 bytes long, encoded as a 130 character-long hexadecimal string` | A smart contract wallet signed. Supabase Auth only accepts EOA signatures; verify with viem `verifySiweMessage` on your own server instead |
+| `Signed Ethereum message is using URI which is not allowed on this server, message was signed for another app` | The page URL isn't in Redirect URLs |
+| `Ethereum message was issued too long ago` | More than 10 minutes passed between building and sending the message |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
