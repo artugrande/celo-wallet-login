@@ -12,7 +12,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <div className="shell">
           <header className="top">
-            <span className="mark">celo-wallet-login</span>
+            <span className="logos">
+              <a href="https://celo.org" target="_blank" rel="noopener noreferrer" aria-label="Celo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logos/celo.png" alt="Celo" height={20} />
+              </a>
+              <span aria-hidden className="plus">+</span>
+              <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" aria-label="Supabase">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logos/supabase.png" alt="Supabase" height={20} />
+              </a>
+            </span>
             <span className="chain">Celo mainnet · 42220</span>
           </header>
           {children}

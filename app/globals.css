@@ -53,9 +53,30 @@ a {
   padding: 22px 0;
 }
 
-.mark {
-  color: var(--text);
-  font-weight: 600;
+.logos {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logos a {
+  display: inline-flex;
+  opacity: 0.9;
+}
+
+.logos a:hover {
+  opacity: 1;
+}
+
+.logos img {
+  height: 20px;
+  width: auto;
+  display: block;
+}
+
+.plus {
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .foot {
