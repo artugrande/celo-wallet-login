@@ -2,7 +2,7 @@
 
 Sign in with a browser wallet on Celo through Sign-In with Ethereum ([EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)) and [Supabase Auth](https://supabase.com/docs/guides/auth/auth-web3). The user signs a message, nothing goes on chain, no gas, no email or password. Supabase returns a normal session, and row level security only lets a user read their own notes after a sign-in on Celo mainnet (chain ID `42220`).
 
-Live demo: https://siwe-demo.desafia.tech (use a desktop browser with MetaMask or another wallet extension).
+Live demo: https://celosupabase.arturogrande.com (use a desktop browser with MetaMask or another wallet extension).
 
 ## What it shows
 
