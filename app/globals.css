@@ -296,4 +296,14 @@ pre {
   h1 {
     font-size: 27px;
   }
+  .logos {
+    gap: 9px;
+  }
+  .logos img {
+    height: 16px;
+  }
+  .chain {
+    font-size: 11px;
+    white-space: nowrap;
+  }
 }
